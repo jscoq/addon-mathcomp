@@ -1,0 +1,14 @@
+
+(rule
+ (targets coq-pkgs)
+ (deps
+  (package coq-mathcomp-ssreflect)
+  (package coq-mathcomp-fingroup)
+  (package coq-mathcomp-algebra)
+  (package coq-mathcomp-solvable)
+  (package coq-mathcomp-field)
+  (package coq-mathcomp-character))
+ (action
+  (run jscoq build %{dep:coq-mathcomp.json})))
+
+(dirs workdir)
