@@ -9,6 +9,6 @@
   (package coq-mathcomp-field)
   (package coq-mathcomp-character))
  (action
-  (run jscoq build %{dep:coq-mathcomp.json})))
+  (run jscoq build %{dep:coq-mathcomp.json} --package coq-pkgs/mathcomp)))
 
 (dirs workdir)
