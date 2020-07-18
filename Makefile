@@ -1,6 +1,6 @@
 
 REPO = https://github.com/math-comp/math-comp.git
-TAG = mathcomp-1.10.0
+TAG = mathcomp-1.11.0
 WORKDIR = workdir
 
 SUBPKGS = ssreflect fingroup character field solvable algebra all
