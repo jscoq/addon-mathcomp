@@ -11,4 +11,8 @@
  (action
   (run jscoq build %{dep:coq-mathcomp.json} --package coq-pkgs/mathcomp)))
 
+(alias
+ (name all)
+ (deps package.json))
+
 (dirs workdir)

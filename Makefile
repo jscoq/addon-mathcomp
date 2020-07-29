@@ -16,3 +16,6 @@ $(WORKDIR):
 	git clone --depth=1 --no-checkout -b $(TAG) $(REPO) $(WORKDIR)
 	( cd $(WORKDIR) && git checkout $(TAG) && git apply ../mathcomp-fast-load.patch )
 	cp -r dune-files/ $(WORKDIR)
+
+install:
+	dune install coq-mathcomp-{ssreflect,fingroup,algebra,solvable,field,character}
