@@ -12,4 +12,5 @@
    -w -set-maximal-deprecated
    -w -ambiguous-paths
    -w -duplicate-clear
+   -w -notation-incompatible-format
  ))

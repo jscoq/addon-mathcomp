@@ -11,7 +11,7 @@
    -w -set-maximal-deprecated
    -w -ambiguous-paths
    -w -duplicate-clear
-   -w -irrelevant-reserved-notation-only-parsing
-   -w -irrelevant-format-only-parsing
+   -w -non-reversible-notation
+   -w -notation-incompatible-format
    -w -deprecated-hint-constr
  ))
