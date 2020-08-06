@@ -9,7 +9,7 @@
   (package coq-mathcomp-field)
   (package coq-mathcomp-character))
  (action
-  (run jscoq build %{dep:coq-mathcomp.json} --package coq-pkgs/mathcomp)))
+  (run wacoq build %{dep:coq-mathcomp.json})))
 
 (alias
  (name all)

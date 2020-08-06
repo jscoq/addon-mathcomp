@@ -1,6 +1,7 @@
 {
     "rootdir": "workdir/mathcomp",
     "builddir": "coq-pkgs",
+    "bundle": "mathcomp",
     "projects": {
         "mathcomp-ssreflect": {
             "": {
