@@ -7,9 +7,10 @@
   (package coq-mathcomp-algebra)
   (package coq-mathcomp-solvable)
   (package coq-mathcomp-field)
-  (package coq-mathcomp-character))
+  (package coq-mathcomp-character)
+  (:json jscoq-mathcomp.json))
  (action
-  (run jscoq build %{dep:coq-mathcomp.json} --package coq-pkgs/mathcomp)))
+  (run npx %{env:pkgtool=jscoq} build %{json})))
 
 (alias
  (name all)
