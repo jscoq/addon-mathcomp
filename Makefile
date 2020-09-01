@@ -18,4 +18,4 @@ $(WORKDIR):
 	cp -r dune-files/* $(WORKDIR)/
 
 install:
-	dune install ${add-prefix coq-mathcomp, ssreflect fingroup algebra solvable field character}
+	dune install ${addprefix coq-mathcomp-, ssreflect fingroup algebra solvable field character}
