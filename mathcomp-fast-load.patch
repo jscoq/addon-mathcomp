@@ -1,24 +1,12 @@
-diff --git a/mathcomp/Make b/mathcomp/Make
-index 1d837c1..e40eb10 100644
---- a/mathcomp/Make
-+++ b/mathcomp/Make
-@@ -49,7 +49,6 @@ fingroup/quotient.v
- solvable/abelian.v
- solvable/all_solvable.v
- solvable/alt.v
--solvable/burnside_app.v
- solvable/center.v
- solvable/commutator.v
- solvable/cyclic.v
 diff --git a/mathcomp/algebra/rat.v b/mathcomp/algebra/rat.v
-index 7945265..efda92a 100644
+index 3db328d..bf779bb 100644
 --- a/mathcomp/algebra/rat.v
 +++ b/mathcomp/algebra/rat.v
 @@ -804,6 +804,7 @@ Ltac ring_to_rat :=
            -?[(_ + _)%R]/(_ + _)%Q -?[(_ * _)%R]/(_ * _)%Q
            -?[(- _)%R]/(- _)%Q -?[(_ ^-1)%R]/(_ ^-1)%Q /=.
  
-+(*
++(*              
  Lemma rat_ring_theory : (ring_theory 0%Q 1%Q addq mulq subq oppq eq).
  Proof.
  split => * //; rat_to_ring;
@@ -40,7 +28,7 @@ index b05a3c4..bc3d3a4 100644
  Require Export commutator.
  Require Export cyclic.
 diff --git a/mathcomp/ssreflect/order.v b/mathcomp/ssreflect/order.v
-index 01197d2..beb9545 100644
+index 5032dfd..7a96fcc 100644
 --- a/mathcomp/ssreflect/order.v
 +++ b/mathcomp/ssreflect/order.v
 @@ -1,5 +1,6 @@
@@ -51,10 +39,10 @@ index 01197d2..beb9545 100644
  From mathcomp Require Import path fintype tuple bigop finset div prime.
  
 diff --git a/mathcomp/ssreflect/prime.v b/mathcomp/ssreflect/prime.v
-index 2f35e35..d23897a 100644
+index ee5b136..1f6fd50 100644
 --- a/mathcomp/ssreflect/prime.v
 +++ b/mathcomp/ssreflect/prime.v
-@@ -118,7 +118,7 @@ Notation "p ^? e :: pd" := (cons_pfactor p e pd)
+@@ -119,7 +119,7 @@ Notation "p ^? e :: pd" := (cons_pfactor p e pd)
  End PrimeDecompAux.
  
  (* For pretty-printing. *)
@@ -63,17 +51,40 @@ index 2f35e35..d23897a 100644
  
  Definition pfactor p e := p ^ e.
  
+diff --git a/mathcomp/ssreflect/seq.v b/mathcomp/ssreflect/seq.v
+index abca0d9..3c7455e 100644
+--- a/mathcomp/ssreflect/seq.v
++++ b/mathcomp/ssreflect/seq.v
+@@ -2440,6 +2440,7 @@ exists ((x \in s1) :: m); have [|/rem_id<-//] := boolP (x \in s1).
+ by move/perm_to_rem/permPl->; rewrite perm_cons.
+ Qed.
+ 
++(*
+ Lemma count_subseqP s1 s2 :
+   (forall x, count_mem x s1 <= count_mem x s2) <->
+     exists2 s, subseq s s2 & perm_eq s1 s.
+@@ -2447,6 +2448,7 @@ Proof.
+ rewrite count_maskP; split=> [[m _]|[_/subseqP[m sm ->]]]; last by exists m.
+ by exists (mask m s2); rewrite ?mask_subseq.
+ Qed.
++*)
+ 
+ End MiscMask.
+ 
 diff --git a/mathcomp/ssreflect/ssrAC.v b/mathcomp/ssreflect/ssrAC.v
-index 8483f71..c0e1924 100644
+index 41c0109..ea4621b 100644
 --- a/mathcomp/ssreflect/ssrAC.v
 +++ b/mathcomp/ssreflect/ssrAC.v
-@@ -85,6 +85,49 @@ elim: s1 (loop [::] s2) => [n|s11 IHs1 s12 IHs2] //= l.
+@@ -86,6 +86,84 @@ elim: s1 (loop [::] s2) => [n|s11 IHs1 s12 IHs2] //= l.
  by rewrite IHs1 [in RHS]IHs1 IHs2 catA.
  Qed.
  
-+Require Import BinPos.
++
++Require Import BinPos Ring.
 +
 +Section NumberInterpretation.
++
++Import BinPos.
 +
 +Section Trec.
 +
@@ -100,32 +111,63 @@ index 8483f71..c0e1924 100644
 +  |    0,    _ => xH
 +  end.
 +
-+Notation natTrecE := NatTrec.trecE.
++Definition bin_of_nat n0 := if n0 is n.+1 then Npos (pos_of_nat n n) else 0%num.
++
++Lemma bin_of_natK : cancel bin_of_nat nat_of_bin.
++Proof.
++have sub2nn n : n.*2 - n = n by rewrite -addnn addKn.
++case=> //= n; rewrite -[n in RHS]sub2nn.
++by elim: n {2 4}n => // m IHm [|[|n]] //=; rewrite IHm // natTrecE sub2nn.
++Qed.
++
++Lemma nat_of_binK : cancel nat_of_bin bin_of_nat.
++Proof.
++case=> //=; elim=> //= p; case: (nat_of_pos p) => //= n [<-].
++  by rewrite natTrecE !addnS {2}addnn; elim: {1 3}n.
++by rewrite natTrecE addnS /= addnS {2}addnn; elim: {1 3}n.
++Qed.
++
++Lemma nat_of_succ_pos p : Pos.succ p = p.+1 :> nat.
++Proof. by elim: p => //= p ->; rewrite !natTrecE. Qed.
 +
 +Lemma nat_of_add_pos p q : (p + q)%positive = p + q :> nat.
-+Proof. Admitted.
-+(* apply: @fst _ (Pplus_carry p q = (p + q).+1 :> nat) _. *)
-+(* elim: p q => [p IHp|p IHp|] [q|q|] //=; rewrite !natTrecE //; *)
-+(*   by rewrite ?IHp ?nat_of_succ_pos ?(doubleS, doubleD, addn1, addnS). *)
-+(* Qed. *)
++Proof.
++apply: @fst _ (Pplus_carry p q = (p + q).+1 :> nat) _.
++elim: p q => [p IHp|p IHp|] [q|q|] //=; rewrite !natTrecE //;
++  by rewrite ?IHp ?nat_of_succ_pos ?(doubleS, doubleD, addn1, addnS).
++Qed.
++
++Lemma nat_of_mul_pos p q : (p * q)%positive = p * q :> nat.
++Proof.
++elim: p => [p IHp|p IHp|] /=; rewrite ?mul1n //;
++  by rewrite ?nat_of_add_pos /= !natTrecE IHp doubleMl.
++Qed.
 +
 +Lemma nat_of_add_bin b1 b2 : (b1 + b2)%num = b1 + b2 :> nat.
 +Proof. by case: b1 b2 => [|p] [|q]; rewrite ?addn0 //= nat_of_add_pos. Qed.
 +
++Lemma nat_of_mul_bin b1 b2 : (b1 * b2)%num = b1 * b2 :> nat.
++Proof. by case: b1 b2 => [|p] [|q]; rewrite ?muln0 //= nat_of_mul_pos. Qed.
++
++Lemma nat_of_exp_bin n (b : N) : n ^ b = pow_N 1 muln n b.
++Proof.
++by case: b; last (elim=> //= p <-; rewrite natTrecE mulnn -expnM muln2 ?expnS).
++Qed.
++
 +End NumberInterpretation.
++
 +
  Definition Leaf_of_nat n := Leaf ((pos_of_nat n n) - 1)%positive.
  
  Module Import Syntax.
 diff --git a/mathcomp/ssreflect/ssrnat.v b/mathcomp/ssreflect/ssrnat.v
-index 39c8451..37c2fb1 100644
+index 8dbfc73..4e579e9 100644
 --- a/mathcomp/ssreflect/ssrnat.v
 +++ b/mathcomp/ssreflect/ssrnat.v
-@@ -1,9 +1,12 @@
+@@ -1,9 +1,11 @@
  (* (c) Copyright 2006-2016 Microsoft Corporation and Inria.                  *)
  (* Distributed under the terms of CeCILL-B.                                  *)
  From mathcomp Require Import ssreflect ssrfun ssrbool eqtype.
-+
 +(*
  Require Import BinNat.
  Require BinPos Ndec.
@@ -134,7 +176,7 @@ index 39c8451..37c2fb1 100644
  
  (******************************************************************************)
  (* A version of arithmetic on nat (natural numbers) that is better suited to  *)
-@@ -1699,6 +1702,7 @@ End NatTrec.
+@@ -1810,6 +1812,7 @@ End NatTrec.
  
  Notation natTrecE := NatTrec.trecE.
  
@@ -142,7 +184,7 @@ index 39c8451..37c2fb1 100644
  Lemma eq_binP : Equality.axiom N.eqb.
  Proof.
  move=> p q; apply: (iffP idP) => [|<-]; last by case: p => //; elim.
-@@ -1783,6 +1787,7 @@ by case: b; last (elim=> //= p <-; rewrite natTrecE mulnn -expnM muln2 ?expnS).
+@@ -1894,6 +1897,7 @@ by case: b; last (elim=> //= p <-; rewrite natTrecE mulnn -expnM muln2 ?expnS).
  Qed.
  
  End NumberInterpretation.
@@ -150,7 +192,7 @@ index 39c8451..37c2fb1 100644
  
  (* Big(ger) nat IO; usage:                              *)
  (*     Num 1 072 399                                    *)
-@@ -1791,6 +1796,7 @@ End NumberInterpretation.
+@@ -1902,6 +1906,7 @@ End NumberInterpretation.
  (*        to display the result of an expression that   *)
  (*        returns a larger integer.                     *)
  
@@ -158,7 +200,7 @@ index 39c8451..37c2fb1 100644
  Record number : Type := Num {bin_of_number :> N}.
  
  Definition extend_number (nn : number) m := Num (nn * 1000 + bin_of_nat m).
-@@ -1803,9 +1809,11 @@ Canonical number_eqType := Eval hnf in EqType number number_eqMixin.
+@@ -1914,9 +1919,11 @@ Canonical number_eqType := Eval hnf in EqType number number_eqMixin.
  
  Notation "[ 'Num' 'of' e ]" := (Num (bin_of_nat e))
    (at level 0, format "[ 'Num'  'of'  e ]") : nat_scope.
@@ -170,7 +212,7 @@ index 39c8451..37c2fb1 100644
  Lemma nat_semi_ring : semi_ring_theory 0 1 addn muln (@eq _).
  Proof. exact: mk_srt add0n addnC addnA mul1n mul0n mulnC mulnA mulnDl. Qed.
  
-@@ -1815,6 +1823,7 @@ Proof. by move: nat_of_add_bin nat_of_mul_bin; split=> //= m n /eqP ->. Qed.
+@@ -1926,6 +1933,7 @@ Proof. by move: nat_of_add_bin nat_of_mul_bin; split=> //= m n /eqP ->. Qed.
  
  Lemma nat_power_theory : power_theory 1 muln (@eq _) nat_of_bin expn.
  Proof. by split; apply: nat_of_exp_bin. Qed.
@@ -178,7 +220,7 @@ index 39c8451..37c2fb1 100644
  
  (* Interface to the ring tactic machinery. *)
  
-@@ -1822,11 +1831,13 @@ Fixpoint pop_succn e := if e is e'.+1 then fun n => pop_succn e' n.+1 else id.
+@@ -1933,11 +1941,13 @@ Fixpoint pop_succn e := if e is e'.+1 then fun n => pop_succn e' n.+1 else id.
  
  Ltac pop_succn e := eval lazy beta iota delta [pop_succn] in (pop_succn e 1).
  
@@ -192,7 +234,7 @@ index 39c8451..37c2fb1 100644
  
  Ltac succn_to_add :=
    match goal with
-@@ -1839,9 +1850,11 @@ Ltac succn_to_add :=
+@@ -1950,9 +1960,11 @@ Ltac succn_to_add :=
    | _ => idtac
    end.
  
