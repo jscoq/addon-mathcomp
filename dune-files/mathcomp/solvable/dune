@@ -1,7 +1,7 @@
 (coq.theory
  (name mathcomp.solvable)
  (package coq-mathcomp-solvable)
- (modules :standard \ burnside_app)
+ ;(modules :standard \ burnside_app)  ; for fast-load patch
  (synopsis "Mathematical Components")
  (theories mathcomp.ssreflect mathcomp.fingroup mathcomp.algebra)
  (flags
