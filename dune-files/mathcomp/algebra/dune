@@ -16,4 +16,5 @@
    -w -irrelevant-format-only-parsing
    -w -irrelevant-reserved-notation-only-parsing
    -w -deprecated-hint-constr
+   -w -deprecated-hint-without-locality
  ))

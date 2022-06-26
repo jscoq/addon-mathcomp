@@ -13,4 +13,6 @@
    -w -ambiguous-paths
    -w -duplicate-clear
    -w -notation-incompatible-format
+   -w -deprecated-hint-without-locality
+   -w -deprecated-hint-rewrite-without-locality
  ))
