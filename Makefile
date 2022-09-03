@@ -1,7 +1,6 @@
 
 REPO = https://github.com/math-comp/math-comp.git
-TAG = mathcomp-1.14.0
-COMMIT = dd31ca0a2fac7bf81000bcde29a39c68178fe9ed
+TAG = mathcomp-1.15.0
 WORKDIR = workdir
 
 SUBPKGS = ssreflect fingroup character field solvable algebra all
@@ -12,7 +11,7 @@ mkdir -p $(WORKDIR) && cd $(WORKDIR) && git init && \
 git remote add origin $(REPO) && \
 git fetch --depth=1 origin $(COMMIT) && git reset --hard FETCH_HEAD
 endef
-GIT_CLONE = ${if $(COMMIT), $(GIT_CLONE_COMMIT), git clone --recursive --depth=1 -b $(TAG) $(REPO) $(WORKDIR)}
+GIT_CLONE = ${if $(COMMIT), $(GIT_CLONE_COMMIT), git clone --recursive --depth=1 -c advice.detachedHead=false -b $(TAG) $(REPO) $(WORKDIR)}
 
 .PHONY: all get
 
