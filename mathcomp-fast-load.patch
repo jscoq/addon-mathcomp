@@ -54,26 +54,6 @@ index c60b72a..60afad8 100644
  
  Definition pfactor p e := p ^ e.
  
-diff --git a/mathcomp/ssreflect/seq.v b/mathcomp/ssreflect/seq.v
-index 2725d5a..bfd2d8a 100644
---- a/mathcomp/ssreflect/seq.v
-+++ b/mathcomp/ssreflect/seq.v
-@@ -2479,6 +2479,7 @@ exists ((x \in s1) :: m); have [|/rem_id<-//] := boolP (x \in s1).
- by move/perm_to_rem/permPl->; rewrite perm_cons.
- Qed.
- 
-+(*
- Lemma count_subseqP s1 s2 :
-   (forall x, count_mem x s1 <= count_mem x s2) <->
-     exists2 s, subseq s s2 & perm_eq s1 s.
-@@ -2486,6 +2487,7 @@ Proof.
- rewrite count_maskP; split=> [[m _]|[_/subseqP[m sm ->]]]; last by exists m.
- by exists (mask m s2); rewrite ?mask_subseq.
- Qed.
-+*)
- 
- End MiscMask.
- 
 diff --git a/mathcomp/ssreflect/ssrAC.v b/mathcomp/ssreflect/ssrAC.v
 index bbb5890..fef4d96 100644
 --- a/mathcomp/ssreflect/ssrAC.v
