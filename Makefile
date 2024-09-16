@@ -24,7 +24,7 @@ all: $(WORKDIR)
 	cp -r dune-files/* $(WORKDIR)/
 	## FIXME: we should use dune build -p, however this will mess with root
 	# dune build --root .. -p $(SUBPKGS_BUILD)
-	dune build --root .. $(addsuffix .install,$(addprefix mathcomp/,$(SUBPKGS)))
+	dune build --root .. $(addsuffix .install,$(addprefix mathcomp/,$(SUBPKGS))) mathcomp/package.json
 
 get: $(WORKDIR)
 
