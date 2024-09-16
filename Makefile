@@ -2,7 +2,13 @@ REPO = https://github.com/math-comp/math-comp.git
 TAG = mathcomp-1.19.0
 WORKDIR = workdir
 
-SUBPKGS = ssreflect fingroup character field solvable algebra all
+# Regular package set
+# SUBPKGS = ssreflect fingroup algebra field solvable character
+
+# Reduced pkg set for jsCoq 2.0 development
+SUBPKGS = ${addprefix coq-mathcomp-,ssreflect fingroup algebra}
+# This needs to be a comma-separated list damn
+SUBPKGS_BUILD = coq-mathcomp-ssreflect,coq-mathcomp-fingroup,coq-mathcomp-algebra
 
 # Git boilerplate
 define GIT_CLONE_COMMIT
@@ -16,7 +22,7 @@ GIT_CLONE = ${if $(COMMIT), $(GIT_CLONE_COMMIT), git clone --recursive --depth=1
 
 all: $(WORKDIR)
 	cp -r dune-files/* $(WORKDIR)/
-	dune build
+	dune build -p $(SUBPKGS_BUILD)
 
 get: $(WORKDIR)
 
@@ -25,4 +31,4 @@ $(WORKDIR):
 	( cd $(WORKDIR) && git apply ../mathcomp-fast-load.patch )
 
 install:
-	dune install ${addprefix coq-mathcomp-, ssreflect fingroup algebra solvable field character}
+	dune install $(SUBPKGS)
