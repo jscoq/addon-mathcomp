@@ -8,7 +8,7 @@ WORKDIR = workdir
 # Reduced pkg set for jsCoq 2.0 development
 SUBPKGS = ${addprefix coq-mathcomp-,ssreflect fingroup algebra}
 # This needs to be a comma-separated list damn
-SUBPKGS_BUILD = coq-mathcomp-ssreflect,coq-mathcomp-fingroup,coq-mathcomp-algebra
+# SUBPKGS_BUILD = coq-mathcomp-ssreflect,coq-mathcomp-fingroup,coq-mathcomp-algebra
 
 # Git boilerplate
 define GIT_CLONE_COMMIT
@@ -22,7 +22,9 @@ GIT_CLONE = ${if $(COMMIT), $(GIT_CLONE_COMMIT), git clone --recursive --depth=1
 
 all: $(WORKDIR)
 	cp -r dune-files/* $(WORKDIR)/
-	dune build -p $(SUBPKGS_BUILD)
+	## FIXME: we should use dune build -p, however this will mess with root
+	# dune build --root .. -p $(SUBPKGS_BUILD)
+	dune build --root .. $(addsuffix .install,$(addprefix mathcomp/,$(SUBPKGS)))
 
 get: $(WORKDIR)
 
